@@ -54,7 +54,10 @@ signupBtn.addEventListener('click', async () => {
 });
 
 googleBtn.addEventListener('click', async () => {
-  const { error } = await supabaseClient.auth.signInWithOAuth({ provider: 'google' });
+  const { error } = await supabaseClient.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo: window.location.href },
+  });
   if (error) errorMsg.textContent = error.message;
 });
 
