@@ -1,44 +1,65 @@
 const loginScreen = document.getElementById('login-screen');
 const calculatorScreen = document.getElementById('calculator-screen');
+const loginForm = document.getElementById('login-form');
 const errorMsg = document.getElementById('error-msg');
 const welcomeMsg = document.getElementById('welcome-msg');
 const logoutBtn = document.getElementById('logout-btn');
 const display = document.getElementById('calc-display');
+const signupBtn = document.getElementById('signup-btn');
+const googleBtn = document.getElementById('google-btn');
 
-function decodeJwtPayload(token) {
-  const base64Url = token.split('.')[1];
-  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-  const json = decodeURIComponent(
-    atob(base64)
-      .split('')
-      .map((c) => '%' + c.charCodeAt(0).toString(16).padStart(2, '0'))
-      .join('')
-  );
-  return JSON.parse(json);
-}
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-function handleGoogleLogin(response) {
-  let profile;
-  try {
-    profile = decodeJwtPayload(response.credential);
-  } catch (err) {
-    errorMsg.textContent = 'Could not verify Google sign-in. Please try again.';
-    return;
-  }
-
+function showCalculator(user) {
   errorMsg.textContent = '';
-  welcomeMsg.textContent = `Hi, ${profile.name || profile.email}`;
+  welcomeMsg.textContent = `Hi, ${user.user_metadata?.full_name || user.email}`;
   loginScreen.classList.add('hidden');
   calculatorScreen.classList.remove('hidden');
 }
 
-logoutBtn.addEventListener('click', () => {
+function showLogin() {
   calculatorScreen.classList.add('hidden');
   loginScreen.classList.remove('hidden');
-  if (window.google && google.accounts && google.accounts.id) {
-    google.accounts.id.disableAutoSelect();
-  }
   resetCalculator();
+}
+
+supabaseClient.auth.onAuthStateChange((_event, session) => {
+  if (session?.user) {
+    showCalculator(session.user);
+  } else {
+    showLogin();
+  }
+});
+
+loginForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+
+  const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+  errorMsg.textContent = error ? error.message : '';
+});
+
+signupBtn.addEventListener('click', async () => {
+  const email = document.getElementById('email').value.trim();
+  const password = document.getElementById('password').value;
+
+  if (!email || !password) {
+    errorMsg.textContent = 'Enter an email and password to create an account.';
+    return;
+  }
+
+  const { error } = await supabaseClient.auth.signUp({ email, password });
+  errorMsg.textContent = error ? error.message : 'Account created. Check your email to confirm, then sign in.';
+});
+
+googleBtn.addEventListener('click', async () => {
+  const { error } = await supabaseClient.auth.signInWithOAuth({ provider: 'google' });
+  if (error) errorMsg.textContent = error.message;
+});
+
+logoutBtn.addEventListener('click', async () => {
+  await supabaseClient.auth.signOut();
 });
 
 let expression = '';

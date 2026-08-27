@@ -32,24 +32,93 @@ body {
   width: 320px;
 }
 
-/* Login card */
-#login-card h1 {
+/* Login form */
+#login-form h1 {
   margin: 0 0 12px;
   text-align: center;
   color: #333;
 }
 
-#login-card .subtitle {
+#login-form .subtitle {
   text-align: center;
   color: #666;
   font-size: 14px;
-  margin: 0 0 24px;
+  margin: 0 0 20px;
 }
 
-#login-card .g_id_signin {
+#login-form label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: #555;
+}
+
+#login-form input {
+  width: 100%;
+  padding: 10px 12px;
+  margin-bottom: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 15px;
+}
+
+#login-form button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#signin-btn {
+  background: #667eea;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+#signin-btn:hover {
+  background: #5563d1;
+}
+
+#signup-btn {
+  background: #eee;
+  color: #333;
+}
+
+#signup-btn:hover {
+  background: #ddd;
+}
+
+.divider {
   display: flex;
-  justify-content: center;
-  margin-bottom: 8px;
+  align-items: center;
+  text-align: center;
+  color: #999;
+  font-size: 13px;
+  margin: 18px 0 14px;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #ddd;
+}
+
+.divider span {
+  padding: 0 10px;
+}
+
+.google-btn {
+  background: #fff;
+  border: 1px solid #ccc !important;
+  color: #333;
+}
+
+.google-btn:hover {
+  background: #f5f5f5;
 }
 
 .error {
