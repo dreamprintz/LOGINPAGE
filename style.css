@@ -34,9 +34,16 @@ body {
 
 /* Login form */
 #login-form h1 {
-  margin: 0 0 20px;
+  margin: 0 0 12px;
   text-align: center;
   color: #333;
+}
+
+#login-form .subtitle {
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+  margin: 0 0 20px;
 }
 
 #login-form label {
@@ -60,15 +67,58 @@ body {
   padding: 12px;
   border: none;
   border-radius: 6px;
-  background: #667eea;
-  color: #fff;
-  font-size: 16px;
+  font-size: 15px;
   cursor: pointer;
   transition: background 0.2s;
 }
 
-#login-form button:hover {
+#signin-btn {
+  background: #667eea;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+#signin-btn:hover {
   background: #5563d1;
+}
+
+#signup-btn {
+  background: #eee;
+  color: #333;
+}
+
+#signup-btn:hover {
+  background: #ddd;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  color: #999;
+  font-size: 13px;
+  margin: 18px 0 14px;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #ddd;
+}
+
+.divider span {
+  padding: 0 10px;
+}
+
+.google-btn {
+  background: #fff;
+  border: 1px solid #ccc !important;
+  color: #333;
+}
+
+.google-btn:hover {
+  background: #f5f5f5;
 }
 
 .error {

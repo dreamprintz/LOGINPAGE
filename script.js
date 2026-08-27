@@ -1,32 +1,72 @@
 const loginScreen = document.getElementById('login-screen');
 const calculatorScreen = document.getElementById('calculator-screen');
-const loginForm = document.getElementById('login-form');
-const errorMsg = document.getElementById('error-msg');
 const welcomeMsg = document.getElementById('welcome-msg');
 const logoutBtn = document.getElementById('logout-btn');
 const display = document.getElementById('calc-display');
+const clerkSignInDiv = document.getElementById('clerk-sign-in');
 
-loginForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-  const username = document.getElementById('username').value.trim();
-  const password = document.getElementById('password').value;
-
-  if (!username || !password) {
-    errorMsg.textContent = 'Please enter both username and password.';
-    return;
-  }
-
-  errorMsg.textContent = '';
-  welcomeMsg.textContent = `Hi, ${username}`;
+function showCalculator(user) {
+  welcomeMsg.textContent = `Hi, ${user.fullName || user.primaryEmailAddress?.emailAddress || user.primaryPhoneNumber?.phoneNumber}`;
   loginScreen.classList.add('hidden');
   calculatorScreen.classList.remove('hidden');
-  loginForm.reset();
-});
+}
 
-logoutBtn.addEventListener('click', () => {
+const phoneStatus = document.getElementById('phone-status');
+
+window.phoneEmailListener = async function (userObj) {
+  phoneStatus.textContent = 'Verifying phone number...';
+  try {
+    const res = await fetch('https://phoneauth.dreamprintz.com/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_json_url: userObj.user_json_url }),
+    });
+    const data = await res.json();
+
+    if (!res.ok || !data.signInToken) {
+      phoneStatus.textContent = 'Phone sign-in failed. Please try again.';
+      return;
+    }
+
+    const signIn = await window.Clerk.client.signIn.create({
+      strategy: 'ticket',
+      ticket: data.signInToken,
+    });
+    await window.Clerk.setActive({ session: signIn.createdSessionId });
+    phoneStatus.textContent = '';
+  } catch (err) {
+    phoneStatus.textContent = 'Phone sign-in failed. Please try again.';
+  }
+};
+
+function showLogin() {
   calculatorScreen.classList.add('hidden');
   loginScreen.classList.remove('hidden');
   resetCalculator();
+  window.Clerk.mountSignIn(clerkSignInDiv);
+}
+
+window.addEventListener('load', async () => {
+  await window.Clerk.load();
+
+  if (window.Clerk.user) {
+    showCalculator(window.Clerk.user);
+  } else {
+    showLogin();
+  }
+
+  window.Clerk.addListener(({ user }) => {
+    if (user) {
+      window.Clerk.unmountSignIn(clerkSignInDiv);
+      showCalculator(user);
+    } else {
+      showLogin();
+    }
+  });
+});
+
+logoutBtn.addEventListener('click', async () => {
+  await window.Clerk.signOut();
 });
 
 let expression = '';

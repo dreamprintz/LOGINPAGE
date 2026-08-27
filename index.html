@@ -5,21 +5,27 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Login</title>
 <link rel="stylesheet" href="style.css">
+<script
+  async
+  crossorigin="anonymous"
+  data-clerk-publishable-key="pk_live_Y2xlcmsuZHJlYW1wcmludHouY29tJA"
+  src="https://clerk.dreamprintz.com/npm/@clerk/clerk-js@5/dist/clerk.browser.js"
+  type="text/javascript"
+></script>
 </head>
 <body>
 
   <div id="login-screen" class="screen">
-    <form id="login-form" class="card">
+    <div class="card">
       <h1>Sign In</h1>
-      <label for="username">Username</label>
-      <input type="text" id="username" required placeholder="Enter username">
+      <p class="subtitle">Sign in to open the calculator.</p>
+      <div id="clerk-sign-in"></div>
 
-      <label for="password">Password</label>
-      <input type="password" id="password" required placeholder="Enter password">
-
-      <p id="error-msg" class="error"></p>
-      <button type="submit">Login</button>
-    </form>
+      <div class="divider"><span>or</span></div>
+      <div class="pe_signin_button" data-client-id="17471167603757023036"></div>
+      <script src="https://www.phone.email/sign_in_button_v1.js" async></script>
+      <p id="phone-status" class="error"></p>
+    </div>
   </div>
 
   <div id="calculator-screen" class="screen hidden">
