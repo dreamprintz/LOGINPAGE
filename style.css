@@ -32,43 +32,24 @@ body {
   width: 320px;
 }
 
-/* Login form */
-#login-form h1 {
-  margin: 0 0 20px;
+/* Login card */
+#login-card h1 {
+  margin: 0 0 12px;
   text-align: center;
   color: #333;
 }
 
-#login-form label {
-  display: block;
-  margin-bottom: 6px;
+#login-card .subtitle {
+  text-align: center;
+  color: #666;
   font-size: 14px;
-  color: #555;
+  margin: 0 0 24px;
 }
 
-#login-form input {
-  width: 100%;
-  padding: 10px 12px;
-  margin-bottom: 16px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  font-size: 15px;
-}
-
-#login-form button {
-  width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 6px;
-  background: #667eea;
-  color: #fff;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-#login-form button:hover {
-  background: #5563d1;
+#login-card .g_id_signin {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 8px;
 }
 
 .error {

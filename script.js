@@ -1,31 +1,43 @@
 const loginScreen = document.getElementById('login-screen');
 const calculatorScreen = document.getElementById('calculator-screen');
-const loginForm = document.getElementById('login-form');
 const errorMsg = document.getElementById('error-msg');
 const welcomeMsg = document.getElementById('welcome-msg');
 const logoutBtn = document.getElementById('logout-btn');
 const display = document.getElementById('calc-display');
 
-loginForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-  const username = document.getElementById('username').value.trim();
-  const password = document.getElementById('password').value;
+function decodeJwtPayload(token) {
+  const base64Url = token.split('.')[1];
+  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  const json = decodeURIComponent(
+    atob(base64)
+      .split('')
+      .map((c) => '%' + c.charCodeAt(0).toString(16).padStart(2, '0'))
+      .join('')
+  );
+  return JSON.parse(json);
+}
 
-  if (!username || !password) {
-    errorMsg.textContent = 'Please enter both username and password.';
+function handleGoogleLogin(response) {
+  let profile;
+  try {
+    profile = decodeJwtPayload(response.credential);
+  } catch (err) {
+    errorMsg.textContent = 'Could not verify Google sign-in. Please try again.';
     return;
   }
 
   errorMsg.textContent = '';
-  welcomeMsg.textContent = `Hi, ${username}`;
+  welcomeMsg.textContent = `Hi, ${profile.name || profile.email}`;
   loginScreen.classList.add('hidden');
   calculatorScreen.classList.remove('hidden');
-  loginForm.reset();
-});
+}
 
 logoutBtn.addEventListener('click', () => {
   calculatorScreen.classList.add('hidden');
   loginScreen.classList.remove('hidden');
+  if (window.google && google.accounts && google.accounts.id) {
+    google.accounts.id.disableAutoSelect();
+  }
   resetCalculator();
 });
 
