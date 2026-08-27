@@ -6,10 +6,38 @@ const display = document.getElementById('calc-display');
 const clerkSignInDiv = document.getElementById('clerk-sign-in');
 
 function showCalculator(user) {
-  welcomeMsg.textContent = `Hi, ${user.fullName || user.primaryEmailAddress?.emailAddress}`;
+  welcomeMsg.textContent = `Hi, ${user.fullName || user.primaryEmailAddress?.emailAddress || user.primaryPhoneNumber?.phoneNumber}`;
   loginScreen.classList.add('hidden');
   calculatorScreen.classList.remove('hidden');
 }
+
+const phoneStatus = document.getElementById('phone-status');
+
+window.phoneEmailListener = async function (userObj) {
+  phoneStatus.textContent = 'Verifying phone number...';
+  try {
+    const res = await fetch('https://phoneauth.dreamprintz.com/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_json_url: userObj.user_json_url }),
+    });
+    const data = await res.json();
+
+    if (!res.ok || !data.signInToken) {
+      phoneStatus.textContent = 'Phone sign-in failed. Please try again.';
+      return;
+    }
+
+    const signIn = await window.Clerk.client.signIn.create({
+      strategy: 'ticket',
+      ticket: data.signInToken,
+    });
+    await window.Clerk.setActive({ session: signIn.createdSessionId });
+    phoneStatus.textContent = '';
+  } catch (err) {
+    phoneStatus.textContent = 'Phone sign-in failed. Please try again.';
+  }
+};
 
 function showLogin() {
   calculatorScreen.classList.add('hidden');
